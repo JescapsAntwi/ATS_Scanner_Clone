@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Scanner | Resume Analysis Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .custom-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .resume-dropzone {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+
+        .resume-dropzone:hover,
+        .resume-dropzone.dragover {
+            border-color: #6366f1;
+            background-color: #f5f7ff;
+        }
+
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            background: #e2e8f0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            transition: width 0.5s ease-in-out;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 4px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background-color: #e2e8f0;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <i class="bi bi-file-earmark-check text-indigo-600 text-2xl mr-2"></i>
+                        <span
+                            class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">ATS
+                            Scanner</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#home" class="text-gray-700 hover:text-indigo-600 font-medium">Home</a>
+                    <a href="#about" class="text-gray-700 hover:text-indigo-600 font-medium">About</a>
+                    <a href="#contact" class="text-gray-700 hover:text-indigo-600 font-medium">Contact</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-500 hover:text-indigo-600">
+                        <i class="bi bi-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Home</a>
+                <a href="#about"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">About</a>
+                <a href="#contact"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="min-h-screen pt-16 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1
+                    class="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    ATS Resume Scanner</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Optimize your resume for Applicant Tracking Systems
+                    with our AI-powered analysis tool. Get instant feedback and improve your chances of landing that
+                    dream job.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl custom-shadow p-8">
+                <div class="space-y-6">
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <i class="bi bi-lightbulb-fill text-yellow-500 mr-2"></i>
+                            <span class="font-medium">Pro Tip</span>
+                        </div>
+                        <p class="text-sm text-gray-700">For best results, paste the exact job description from the
+                            listing. The more specific the job description, the more accurate the analysis will be.</p>
+                    </div>
+
+                    <!--<div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Job Description</label>
+                        <textarea id="jobDescription" rows="6"
+                            class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Paste the job description here..."></textarea>
+                    </div>
+
+
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Resume (PDF Only)</label>
+                        <div id="dropzone" class="resume-dropzone p-6 rounded-lg text-center">
+                            <i class="bi bi-upload text-3xl text-indigo-400 mb-2"></i>
+                            <p class="text-gray-500">Drag & drop your resume PDF here or <label for="resume-file"
+                                    class="text-indigo-600 cursor-pointer hover:text-indigo-800">browse files</label>
+                            </p>
+                            <input type="file" id="resume-file" accept=".pdf" class="hidden">
+                            <p id="file-name" class="mt-2 text-sm text-gray-500 hidden"></p>
+                        </div>
+                    </div>-->
+                    <div class="grid md:grid-cols-2 gap-6 items-stretch">
+                        <!-- Job Description -->
+                        <div class="flex flex-col">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Job Description</label>
+                            <textarea id="jobDescription" rows="8"
+                                class="w-full flex-1 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                                placeholder="Paste the job description here..."></textarea>
+                        </div>
+
+                        <!-- Resume Upload -->
+                        <div class="flex flex-col">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Resume (PDF Only)</label>
+                            <div id="dropzone"
+                                class="resume-dropzone flex-1 p-6 rounded-lg text-center flex flex-col justify-center">
+                                <i class="bi bi-upload text-3xl text-indigo-400 mb-2"></i>
+                                <p class="text-gray-500">Drag & drop your resume PDF here or <label for="resume-file"
+                                        class="text-indigo-600 cursor-pointer hover:text-indigo-800">browse
+                                        files</label></p>
+                                <input type="file" id="resume-file" accept=".pdf" class="hidden">
+                                <p id="file-name" class="mt-2 text-sm text-gray-500 hidden"></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <button onclick="analyzeResume()"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:opacity-90 transition flex items-center justify-center font-medium">
+                        <i class="bi bi-search mr-2"></i> Analyze Resume
+                    </button>
+                </div>
+
+                <div id="results" class="mt-8 hidden">
+                    <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold mb-6">Analysis Results</h3>
+
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-2">
+                                <div class="font-medium">ATS Compatibility Score:</div>
+                                <div id="matchScoreText" class="font-bold text-indigo-600">0%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="matchScoreBar" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-1 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <h4 class="font-medium text-red-500 mb-3 flex items-center">
+                                    <i class="bi bi-exclamation-triangle mr-2"></i> Missing Keywords
+                                </h4>
+                                <div>${missing.map(k => `<span class="keyword-tag">${k}</span>`).join(' ')}</div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg shadow-sm mt-6">
+                                <h4 class="font-medium text-indigo-600 mb-3 flex items-center">
+                                    <i class="bi bi-lightbulb mr-2"></i> Profile Summary
+                                </h4>
+                                <p class="text-gray-700">${summary}</p>
+                            </div>
+                        </div>
+
+
+                        <div class="mt-6 bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-medium text-indigo-600 mb-3 flex items-center">
+                                <i class="bi bi-lightbulb mr-2"></i> Improvement Suggestions
+                            </h4>
+                            <ul id="suggestions" class="text-gray-700 list-disc pl-5 space-y-2"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-indigo-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">About Our ATS Scanner</h2>
+                <div class="h-1 w-20 bg-indigo-600 mx-auto mt-4 mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Our ATS Scanner utilizes advanced Large Language Models and Generative AI to provide accurate
+                    analysis of your resume against job descriptions. 
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                <div
+                    class="bg-white rounded-xl shadow-md overflow-hidden transform transition-transform hover:scale-105">
+                    <div class="h-2 bg-indigo-600"></div>
+                    <div class="p-6">
+                        <div class="rounded-full bg-indigo-100 w-14 h-14 flex items-center justify-center mb-4">
+                            <i class="bi bi-lightning-charge text-2xl text-indigo-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Fast Analysis</h3>
+                        <p class="text-gray-600">Get instant feedback on your resume's compatibility with job
+                            requirements, saving you time in your job search.</p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-xl shadow-md overflow-hidden transform transition-transform hover:scale-105">
+                    <div class="h-2 bg-purple-600"></div>
+                    <div class="p-6">
+                        <div class="rounded-full bg-purple-100 w-14 h-14 flex items-center justify-center mb-4">
+                            <i class="bi bi-graph-up text-2xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Accurate Results</h3>
+                        <p class="text-gray-600">Powered by Google's Gemini AI for accurate, intelligent resume
+                            analysis.</p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-xl shadow-md overflow-hidden transform transition-transform hover:scale-105">
+                    <div class="h-2 bg-blue-600"></div>
+                    <div class="p-6">
+                        <div class="rounded-full bg-blue-100 w-14 h-14 flex items-center justify-center mb-4">
+                            <i class="bi bi-arrow-up-circle text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Actionable Tips</h3>
+                        <p class="text-gray-600">Get specific suggestions for improvement to help you tailor your resume
+                            for each job application.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-20">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">How It Works</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div
+                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
+                                    1</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium">Input Job Description</h4>
+                                    <p class="text-gray-600 mt-1">Paste the job posting to help our AI understand what
+                                        the employer is looking for.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div
+                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
+                                    2</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium">Upload Your Resume</h4>
+                                    <p class="text-gray-600 mt-1">Upload your resume as a PDF file or paste the text
+                                        content.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div
+                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
+                                    3</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium">Get Detailed Analysis</h4>
+                                    <p class="text-gray-600 mt-1">Receive a comprehensive compatibility score, keyword
+                                        analysis, and suggestions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <img src="https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHJlc3VtZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                            alt="Resume analysis illustration" class="rounded-lg shadow-lg max-w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section id="contact" class="py-20 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">Contact Us</h2>
+                <div class="h-1 w-20 bg-indigo-600 mx-auto mt-4 mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Have questions about our ATS Scanner? Get in touch with us.
+                </p>
+            </div>
+
+            <div class="flex justify-center">
+                <div class="w-full max-w-2xl px-4">
+                    <div class="bg-white rounded-xl shadow-md p-8">
+                        <h3 class="text-xl font-semibold mb-6">Send Us a Message</h3>
+                        <form onsubmit="handleSubmit(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" required
+                                    class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" required
+                                    class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                                <input type="text" required
+                                    class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                <textarea required rows="4"
+                                    class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-md hover:opacity-90 transition font-medium">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Resume file upload handling
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('resume-file');
+        const fileName = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                fileName.textContent = e.target.files[0].name;
+                fileName.classList.remove('hidden');
+            }
+        });
+
+
+        ['dragover', 'dragenter'].forEach(eventName => {
+            dropzone.addEventListener(eventName, function (e) {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'dragend', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, function (e) {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+
+                if (eventName === 'drop') {
+                    fileInput.files = e.dataTransfer.files;
+                    if (e.dataTransfer.files.length > 0) {
+                        fileName.textContent = e.dataTransfer.files[0].name;
+                        fileName.classList.remove('hidden');
+                    }
+                }
+            }, false);
+        });
+
+        // Resume analysis function
+        /*function analyzeResume() {
+            const jobDescription = document.getElementById('jobDescription').value;
+            const resumeText = document.getElementById('resume').value;
+            const resumeFile = document.getElementById('resume-file').files[0];
+            
+            if (!jobDescription) {
+                alert('Please enter a job description');
+                return;
+            }
+            
+            if (!resumeText && !resumeFile) {
+                alert('Please either enter resume text or upload a PDF');
+                return;
+            }
+            
+            // Show loading state
+            document.getElementById('results').innerHTML = `
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+                    <p>Analyzing your resume against the job description...</p>
+                </div>
+            `;
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Simulate API delay
+            setTimeout(() => {
+                // Simulate analysis results
+                const score = Math.floor(Math.random() * 31) + 70; // 70-100%
+                
+                // Determine color based on score
+                let scoreColor = 'text-red-600';
+                if (score >= 90) {
+                    scoreColor = 'text-green-600';
+                } else if (score >= 80) {
+                    scoreColor = 'text-blue-600';
+                } else if (score >= 70) {
+                    scoreColor = 'text-yellow-600';
+                }
+                
+                // Generate missing keywords
+                const allKeywords = [
+                    'Python', 'JavaScript', 'React', 'Node.js', 'SQL', 'TypeScript',
+                    'Machine Learning', 'AWS', 'Azure', 'Docker', 'Kubernetes', 'CI/CD',
+                    'Data Analysis', 'Agile', 'Scrum', 'Project Management', 'UI/UX',
+                    'REST API', 'GraphQL', 'Microservices', 'Unit Testing'
+                ];
+                
+                const shuffled = [...allKeywords].sort(() => 0.5 - Math.random());
+                const missingKeywords = shuffled.slice(0, 4 + Math.floor(Math.random() * 4));
+                const matchedKeywords = shuffled.slice(10, 15 + Math.floor(Math.random() * 5));
+                
+                // Generate suggestions
+                const suggestions = [
+                    'Add more specific technical skills that match the job requirements',
+                    'Include quantifiable achievements and metrics in your experience section',
+                    'Highlight relevant certifications and education more prominently',
+                    'Use more industry-specific terminology from the job description',
+                    'Reorganize your resume to put the most relevant experience at the top',
+                    'Add a summary section that directly addresses the key job requirements',
+                    'Remove irrelevant experience to make room for more targeted content'
+                ];
+                
+                const shuffledSuggestions = [...suggestions].sort(() => 0.5 - Math.random());
+                const selectedSuggestions = shuffledSuggestions.slice(0, 3 + Math.floor(Math.random() * 3));
+                
+                // Update UI with results
+                document.getElementById('results').innerHTML = `
+                    <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold mb-6">Analysis Results</h3>
+                        
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-2">
+                                <div class="font-medium">ATS Compatibility Score:</div>
+                                <div id="matchScoreText" class="font-bold ${scoreColor}">${score}%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="matchScoreBar" class="progress-bar-fill" style="width: ${score}%"></div>
+                            </div>
+                            <div class="mt-2 text-sm text-gray-500">
+                                ${score >= 85 ? 'Excellent match! Your resume is well-optimized for this job.' : 
+                                  score >= 75 ? 'Good match. Some improvements could help your chances.' :
+                                  'Your resume needs optimization to better match this job posting.'}
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <h4 class="font-medium text-red-500 mb-3 flex items-center">
+                                    <i class="bi bi-exclamation-triangle mr-2"></i> Missing Keywords
+                                </h4>
+                                <div id="missingKeywords" class="text-gray-700">
+                                    ${missingKeywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join(' ')}
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <h4 class="font-medium text-green-600 mb-3 flex items-center">
+                                    <i class="bi bi-check-circle mr-2"></i> Matched Keywords
+                                </h4>
+                                <div id="matchedKeywords" class="text-gray-700">
+                                    ${matchedKeywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join(' ')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-medium text-indigo-600 mb-3 flex items-center">
+                                <i class="bi bi-lightbulb mr-2"></i> Improvement Suggestions
+                            </h4>
+                            <ul id="suggestions" class="text-gray-700 list-disc pl-5 space-y-2">
+                                ${selectedSuggestions.map(sugg => `<li>${sugg}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }, 1500);
+        }*/
+        async function analyzeResume() {
+            const jd = document.getElementById('jobDescription').value;
+            const fileInput = document.getElementById('resume-file');
+            const resume = fileInput.files[0];
+
+            if (!jd || !resume) {
+                alert("Please enter a job description and upload a PDF resume.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("jd", jd);
+            formData.append("resume", resume);
+
+            document.getElementById('results').classList.remove("hidden");
+            document.getElementById('results').innerHTML = `
+        <div class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+            <p>Analyzing your resume...</p>
+        </div>
+    `;
+
+
+
+            try {
+                const response = await fetch("http://localhost:8000/analyze-resume/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    document.getElementById('results').innerHTML = `<p class="text-red-600">${result.error}</p>`;
+                    return;
+                }
+
+                const score = result["JD Match"];
+                const missing = result["MissingKeywords"];
+                const matched = result["MatchedKeywords"];
+                const summary = result["Profile Summary"];
+
+
+                document.getElementById('results').innerHTML = `
+            <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 class="text-xl font-semibold mb-6">Analysis Results</h3>
+
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <div class="font-medium">ATS Compatibility Score:</div>
+                        <div class="font-bold text-indigo-600">${score}%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: ${score}%;"></div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-1 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <h4 class="font-medium text-red-500 mb-3 flex items-center">
+                                    <i class="bi bi-exclamation-triangle mr-2"></i> Missing Keywords
+                                </h4>
+                                <div>${missing.map(k => `<span class="keyword-tag">${k}</span>`).join(' ')}</div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <h4 class="font-medium text-green-600 mb-3 flex items-center">
+                                    <i class="bi bi-check-circle mr-2"></i> Matched Keywords
+                                </h4>
+                                <div>${matched.map(k => `<span class="keyword-tag">${k}</span>`).join(' ')}</div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm mt-6">
+                                <h4 class="font-medium text-indigo-600 mb-3 flex items-center">
+                                    <i class="bi bi-lightbulb mr-2"></i> Profile Summary
+                                </h4>
+                                <ul class="list-disc pl-5 text-gray-700">
+                                    ${summary}
+                                </ul>
+                            </div>
+
+                        </div>
+            </div>
+        `;
+
+            } catch (err) {
+                document.getElementById('results').innerHTML = `<p class="text-red-600">Error: ${err.message}</p>`;
+            }
+        }
+
+
+        // Form submission handler
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            // Show success message
+            const form = event.target;
+            const formContainer = form.parentElement;
+
+            formContainer.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4">
+                        <i class="bi bi-check-lg text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Message Sent Successfully!</h3>
+                    <p class="text-gray-600">Thank you for your message. We'll get back to you shortly.</p>
+                </div>
+            `;
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+
+                // Close mobile menu if open
+                if (!document.getElementById('mobile-menu').classList.contains('hidden')) {
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    <script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+</body>
+
+</html>
