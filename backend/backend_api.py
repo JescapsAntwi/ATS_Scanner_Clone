@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 import json
 
-from helper import configure_genai, extract_pdf_text, prepare_prompt, get_gemini_response
+from backend.helper import configure_genai, extract_pdf_text, prepare_prompt, get_gemini_response
 
 load_dotenv()
 configure_genai(os.getenv("GOOGLE_API_KEY"))
