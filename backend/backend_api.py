@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import json
 
+# #import modelss
 from backend.helper import configure_genai, extract_pdf_text, prepare_prompt, get_gemini_response
 
 # Try to load from .env file
